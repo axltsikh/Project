@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    >
+
+    <LinearLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/FrameContainer"
+            android:layout_weight="10"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"/>
+    </LinearLayout>
+
+</layout>

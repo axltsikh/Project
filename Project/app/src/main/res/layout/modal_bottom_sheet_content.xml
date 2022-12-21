@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ModalBottomSheet"
+    >
+    <data>
+        <variable
+            name="BottomSheet"
+            type="com.example.project.ModalBottomSheet" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:layout_marginTop="15dp"
+            android:onClick="@{BottomSheet::homeClickListener}"
+            android:text="@string/HomeString"
+            style="@style/SettingButtonStyle"/>
+        <Button
+            android:onClick="@{BottomSheet::addOperationClickListener}"
+            android:text="@string/AddOperationString"
+            style="@style/SettingButtonStyle"/>
+        <Button
+            android:onClick="@{BottomSheet::categoryClickListener}"
+            android:text="@string/CategoryString"
+            style="@style/SettingButtonStyle"/>
+        <Button
+            android:onClick="@{BottomSheet::graphicsClickListener}"
+            android:text="@string/GraphicsString"
+            style="@style/SettingButtonStyle"/>
+        <Button
+            android:drawableLeft="@drawable/bottom_sheet_settings_icon"
+            android:layout_marginBottom="15dp"
+            android:onClick="@{BottomSheet::settingsClickListener}"
+            android:text="@string/SettingsString"
+            style="@style/SettingButtonStyle"/>
+    </LinearLayout>
+</layout>
