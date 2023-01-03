@@ -1,103 +1,90 @@
 package com.example.project.viewmodels
 
+import android.content.ContentValues
 import android.graphics.Color
-import android.graphics.Typeface
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
+import android.widget.AdapterView
+import android.widget.Button
+import androidx.databinding.BaseObservable
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.project.ModalBottomSheet
 import com.example.project.ModalBottomSheet.Companion.TAG
 import com.example.project.R
+import com.example.project.adapters.BillsSpinnerAdapter
 import com.example.project.adapters.OperationsRecyclerViewAdapter
 import com.example.project.room.database.OperationsDatabase
-import com.example.project.room.entity.Operations
+import com.example.project.room.entity.Bill
+import com.example.project.room.entity.BillGetter
+import com.example.project.room.entity.FullOperation
+import com.example.project.room.entity.OperationsByCategory
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.github.mikephil.charting.utils.MPPointF
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
-class ExspensesViewModel(var database: OperationsDatabase,view: View) : ViewModel() {
-    var entries:ArrayList<PieEntry>
-    var pieChart:PieChart
-    var state:String = "Доход"
-    var operationsAdapter:OperationsRecyclerViewAdapter
-    init{
-        pieChart = view.findViewById(R.id.piechartExs)
-        entries = ArrayList()
-        pieChartWork()
-        operationsAdapter= OperationsRecyclerViewAdapter(database.OperationsDao().getOperations(1))
-        Log.d(TAG, "size: " + database.OperationsDao().getOperations(1).size)
+class ExspensesViewModel(val database:OperationsDatabase) : ViewModel() {
+
+    var state:Boolean=false
+    lateinit var operationsAdapter: OperationsRecyclerViewAdapter
+    lateinit var billsAdapter: BillsSpinnerAdapter
+    sealed class Event{
+        object saveToFile:Event()
+        object createPieChart:Event()
     }
-    fun onIncomesButtonClick(view:View){
-        state="Доход"
-        pieChartWork()
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventsFlow = eventChannel.receiveAsFlow()
+    var bill: BillGetter = BillGetter()
+    init{
+        viewModelScope.launch {
+            state=false
+            bill.bill_id=1
+            operationsAdapter= OperationsRecyclerViewAdapter(database.OperationsDao().getOperations(bill.bill_id,state.toInt()))
+            billsAdapter=BillsSpinnerAdapter(database.OperationsDao().getAllBillsWithCurrency())
+            onIncomesButtonClick(null)
+        }
+    }
+    fun getOperationsByCategory():List<OperationsByCategory>{
+        return database.OperationsDao().getOperationsByCategory(bill.bill_id,state.toInt())
+    }
+
+    fun onSaveButtonClick(view:View){
+        viewModelScope.launch {
+            eventChannel.send(ExspensesViewModel.Event.saveToFile)
+        }
+    }
+    fun onIncomesButtonClick(view:View?){
+        Log.d(TAG, "onIncomesButtonClick: " + "click")
+        state=true
+        operationsAdapter.setNewList(database.OperationsDao().getOperations(bill.bill_id,state.toInt()))
+        viewModelScope.launch {
+            eventChannel.send(Event.createPieChart)
+        }
     }
     fun onConsumptionsButtonClick(view:View){
-        state="Расходы"
-        pieChartWork()
-    }
-    fun onSaveButtonClick(view:View){
-
-    }
-    fun pieChartWork(){
-        entries.clear()
-        pieChart.setUsePercentValues(true)
-        pieChart.getDescription().setEnabled(false)
-        pieChart.setExtraOffsets(5f, 10f, 5f, 5f)
-
-        // on below line we are setting drag for our pie chart
-        pieChart.setDragDecelerationFrictionCoef(0.95f)
-
-        // on below line we are setting hole
-        // and hole color for pie chart
-
-        // on below line we are setting circle color and alpha
-        pieChart.setTransparentCircleColor(Color.WHITE)
-        pieChart.setTransparentCircleAlpha(110)
-
-        // on  below line we are setting hole radius
-        pieChart.setHoleRadius(58f)
-        pieChart.setTransparentCircleRadius(61f)
-
-        // on below line we are setting center text
-        pieChart.setDrawCenterText(true)
-
-        // on below line we are setting
-        // rotation for our pie chart
-        pieChart.setRotationAngle(0f)
-
-        // enable rotation of the pieChart by touch
-        pieChart.setRotationEnabled(true)
-        pieChart.setHighlightPerTapEnabled(false)
-
-        // on below line we are setting animation for our pie chart
-        pieChart.animateY(1400, Easing.EaseInOutQuad)
-
-        // on below line we are disabling our legend for pie chart
-        pieChart.legend.isEnabled = true
-        pieChart.legend.verticalAlignment=Legend.LegendVerticalAlignment.CENTER
-        pieChart.legend.horizontalAlignment=Legend.LegendHorizontalAlignment.RIGHT
-        pieChart.legend.orientation = Legend.LegendOrientation.VERTICAL
-        pieChart.legend.textSize=15f
-
-        for(category in database.OperationsDao().getOperationsByCategory(1,state)){
-            entries.add(PieEntry(category.amount.toFloat(),category.operation_category))
-            Log.d(TAG, "EntriesSize: " + entries.size)
+        state=false
+        operationsAdapter.setNewList(database.OperationsDao().getOperations(bill.bill_id,state.toInt()))
+        viewModelScope.launch {
+            eventChannel.send(Event.createPieChart)
         }
-        val dataSet = PieDataSet(entries, "Расходы")
-        dataSet.valueTextSize=(0f)
-        dataSet.setColors(*ColorTemplate.PASTEL_COLORS)
-        pieChart.setDrawSliceText(false)
-        val data = PieData(dataSet)
-        data.setValueFormatter(PercentFormatter())
-        pieChart.setData(data)
-        pieChart.invalidate()
     }
+    fun onBillSelectionChanged(adapterView: AdapterView<*>, view:View, position:Int, id:Long){
+        bill.updateBill(billsAdapter.getItem(position))
+        onIncomesButtonClick(null)
+    }
+    fun Boolean.toInt()=if(this) 1 else 2
 }

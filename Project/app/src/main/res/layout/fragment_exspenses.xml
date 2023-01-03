@@ -12,8 +12,41 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:minWidth="150dp"
+            android:minHeight="50dp"
+            android:gravity="center_vertical"
+            style="@style/SpinnerStyle"
+            android:spinnerMode="dropdown"
+            android:onItemSelected="@{viewmodel::onBillSelectionChanged}"
+            android:adapter="@{viewmodel.billsAdapter}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <LinearLayout
-            android:layout_marginTop="25dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="20sp"
+                android:text="@string/MoneyLeftString"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="20sp"
+                android:text="@{Double.toString(viewmodel.bill.bill_amount)}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="20sp"
+                android:text="@={viewmodel.bill.currency_name}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_gravity="center"
             android:layout_marginBottom="-70dp"
             android:elevation="25dp"
@@ -24,20 +57,20 @@
                 android:id="@+id/TypeButtonGroup"
                 android:layout_gravity="center"
                 app:singleSelection="true"
+                app:checkedButton="@+id/incomesButtonExspenses"
                 android:layout_height="wrap_content">
                 <Button
-                    android:onClick="@{viewmodel::onIncomesButtonClick}"
-                    android:backgroundTint="@color/white"
+                    android:onClick="@{viewmodel::onConsumptionsButtonClick}"
                     android:gravity="center_horizontal"
-                    android:text="@string/Incomes"
+                    android:text="@string/Consumptions"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="120dp"
                     android:layout_height="80dp"/>
                 <Button
-                    android:onClick="@{viewmodel::onConsumptionsButtonClick}"
-                    android:backgroundTint="@color/white"
+                    android:id="@+id/incomesButtonExspenses"
+                    android:onClick="@{viewmodel::onIncomesButtonClick}"
                     android:gravity="center_horizontal"
-                    android:text="@string/Consumptions"
+                    android:text="@string/Incomes"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="120dp"
                     android:layout_height="80dp"/>
@@ -55,15 +88,18 @@
                 android:layout_height="250dp"/>
         </androidx.cardview.widget.CardView>
         <androidx.recyclerview.widget.RecyclerView
+            tools:text="asdada"
             tools:listitem="@layout/operation_recyclerview_item"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:adapter="@{viewmodel.operationsAdapter}"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="165dp"
             />
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:backgroundTint="@color/white"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="25dp"
             android:layout_gravity="end|bottom"
             android:onClick="@{viewmodel::onSaveButtonClick}"
             android:src="@drawable/ic_baseline_save_24"

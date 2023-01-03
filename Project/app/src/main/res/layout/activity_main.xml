@@ -5,7 +5,11 @@
     tools:context=".MainActivity"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
     >
-
+    <data>
+        <variable
+            name="clickHandler"
+            type="com.example.project.MainActivity.MainActivityClickHandlers" />
+    </data>
     <LinearLayout
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
@@ -15,7 +19,19 @@
             android:id="@+id/FrameContainer"
             android:layout_weight="10"
             android:layout_height="0dp"
-            android:layout_width="match_parent"/>
+            android:layout_width="match_parent">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:backgroundTint="@color/white"
+                android:layout_gravity="start|bottom"
+                android:layout_margin="25dp"
+                android:id="@+id/menuButton"
+                android:visibility="invisible"
+                app:backgroundTint="@color/black"
+                android:onClick="@{clickHandler::onMenuButtonClick}"
+                android:src="@drawable/menu_icon"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
     </LinearLayout>
 
 </layout>

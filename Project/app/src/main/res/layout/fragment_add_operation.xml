@@ -6,17 +6,50 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.example.project.viewmodels.AddOperationViewModel" />
+            type="com.example.project.viewmodels.AddOperationViewModel"/>
     </data>
     <LinearLayout
+        android:id="@+id/ParentLinearLayout"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:layout_marginTop="50dp"
+            style="@style/SpinnerStyle"
+            android:onItemSelected="@{viewmodel::onBillSelectionChanged}"
+            android:adapter="@{viewmodel.billsSpinnerAdapter}"
+            android:minWidth="150dp"
+            android:minHeight="50dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="20sp"
+                android:text="@string/MoneyLeftString"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="20sp"
+                android:text="@{Double.toString(viewmodel.bill.bill_amount)}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="20sp"
+                android:text="@={viewmodel.bill.currency_name}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
         <androidx.cardview.widget.CardView
             android:backgroundTint="@color/white"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_marginTop="50dp"
             android:layout_width="match_parent"
             app:cardElevation="50dp"
             app:cardCornerRadius="50dp"
@@ -32,19 +65,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                     <com.google.android.material.textfield.TextInputEditText
+                        android:onTextChanged="@{viewmodel::onValueTextChanged}"
                         android:layout_gravity="center"
                         android:layout_width="70dp"
                         android:inputType="number"
                         android:hint="@string/InputSum"
-                        android:text="@={viewmodel.sum}"
+                        android:text="@={viewmodel.bindableProperties.operationSum}"
                         android:layout_height="wrap_content"/>
                     <androidx.appcompat.widget.AppCompatSpinner
-                        android:entries="@{viewmodel.currencyEntries}"
-                        android:id="@+id/asd"
-                        android:onItemSelected="@{viewmodel::onCurrencyItemSelectedListener}"
-                        android:layout_gravity="center_vertical"
+                        android:selection="@{viewmodel.bindableProperties.currencySelection}"
+                        style="@style/SpinnerStyle"
+                        android:onItemSelected="@{viewmodel::onCurrencySelectionChanged}"
                         android:layout_width="100dp"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="35dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:adapter="@{viewmodel.currencySpinnerAdapter}" />
+                    <LinearLayout
+                        android:visibility="@{viewmodel.bindableProperties.elementsVisibility}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:gravity="center"
+                            android:layout_marginStart="2dp"
+                            android:textSize="25sp"
+                            android:layout_gravity="center"
+                            android:text="="
+                            android:layout_width="wrap_content"
+                            android:layout_height="45dp"/>
+                        <TextView
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:layout_gravity="center"
+                            android:text="@{viewmodel.bindableProperties.afterConversionValue}"
+                            android:layout_width="wrap_content"
+                            android:layout_height="45dp"/>
+                        <TextView
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:layout_gravity="center"
+                            android:text="@{viewmodel.bindableProperties.baseCurrency}"
+                            android:layout_width="wrap_content"
+                            android:layout_height="45dp"/>
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_margin="50dp"
@@ -56,17 +119,20 @@
                         android:layout_width="wrap_content"
                         android:id="@+id/TypeButtonGroup"
                         android:layout_gravity="center"
+                        app:checkedButton="@id/incomesButton"
+                        app:selectionRequired="true"
                         app:singleSelection="true"
                         android:layout_height="wrap_content">
                         <Button
-                            android:onClick="@{viewmodel::onIncomeClick}"
-                            android:text="@string/Income"
+                            android:id="@+id/incomesButton"
+                            android:onClick="@{viewmodel::onConsumptionClick}"
+                            android:text="@string/Consumption"
                             style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                         <Button
-                            android:onClick="@{viewmodel::onConsumptionClick}"
-                            android:text="@string/Consumption"
+                            android:onClick="@{viewmodel::onIncomeClick}"
+                            android:text="@string/Income"
                             style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
@@ -81,16 +147,27 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <GridView
-            android:layout_marginBottom="50dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="25dp"
             android:adapter="@{viewmodel.categoryAdapter}"
-            android:numColumns="3"
-            android:verticalSpacing="10dp"
-            android:horizontalSpacing="10dp"
+            android:numColumns="auto_fit"
+            android:verticalSpacing="5dp"
+            android:listSelector="@color/white"
+            android:horizontalSpacing="5dp"
             android:layout_width="wrap_content"
+            android:paddingVertical="5dp"
             app:onItemClickListener="@{viewmodel::onGridViewItemClick}"
-            android:layout_height="200dp"/>
+            android:layout_height="170dp"/>
+        <TextView
+            android:textColor="@color/red"
+            android:layout_gravity="center"
+            android:visibility="@{viewmodel.bindableProperties.errorVisibility}"
+            android:text="@{viewmodel.bindableProperties.errorText}"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <Button
+            android:textSize="15sp"
             android:onClick="@{viewmodel::onAddClick}"
             android:layout_gravity="center"
             android:text="@string/Add"

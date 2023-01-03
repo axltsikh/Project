@@ -15,25 +15,36 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <Button
+        <View
+            android:background="@drawable/spinner_background"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="15dp"
+            android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:backgroundTint="@color/black"
+            android:layout_height="6dp"/>
+        <Button
+            android:drawableLeft="@drawable/home_bottom_icon"
             android:onClick="@{BottomSheet::homeClickListener}"
             android:text="@string/HomeString"
             style="@style/SettingButtonStyle"/>
         <Button
+            android:drawableLeft="@drawable/operation_bottom_icon"
             android:onClick="@{BottomSheet::addOperationClickListener}"
             android:text="@string/AddOperationString"
             style="@style/SettingButtonStyle"/>
         <Button
-            android:onClick="@{BottomSheet::categoryClickListener}"
-            android:text="@string/CategoryString"
+            android:drawableLeft="@drawable/bill_bottom_icon"
+            android:onClick="@{BottomSheet::addBillClickListener}"
+            android:text="@string/AddBillString"
             style="@style/SettingButtonStyle"/>
         <Button
+            android:drawableLeft="@drawable/graphic_bottom_icon"
             android:onClick="@{BottomSheet::graphicsClickListener}"
             android:text="@string/GraphicsString"
             style="@style/SettingButtonStyle"/>
         <Button
-            android:drawableLeft="@drawable/bottom_sheet_settings_icon"
+            android:drawableLeft="@drawable/password_icon"
             android:layout_marginBottom="15dp"
             android:onClick="@{BottomSheet::settingsClickListener}"
             android:text="@string/SettingsString"

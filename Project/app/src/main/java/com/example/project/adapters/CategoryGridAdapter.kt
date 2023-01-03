@@ -1,25 +1,23 @@
 package com.example.project.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.example.project.R
 import com.example.project.room.entity.Category
 
-class CategoryGridAdapter(val categoryList:List<Category>, val context: Context) : BaseAdapter(){
 
-    private var layoutInflater:LayoutInflater?=null
-    private lateinit var categoryName: TextView
-    private lateinit var categoryIcon: ImageView
+class CategoryGridAdapter(var categoryList:List<Category>) : BaseAdapter(){
+    lateinit var categoryName: TextView
+    lateinit var categoryIcon: ImageView
     override fun getCount(): Int {
         return categoryList.size
     }
+    constructor():this(listOf()){
 
-    override fun getItem(p0: Int): Any {
+    }
+    override fun getItem(p0: Int): Category {
         return categoryList.get(p0)
     }
 
@@ -29,18 +27,18 @@ class CategoryGridAdapter(val categoryList:List<Category>, val context: Context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var convertView = convertView
-        if (layoutInflater == null) {
-            layoutInflater =
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        }
         if (convertView == null) {
-            convertView = layoutInflater!!.inflate(R.layout.category_grid_view_item, null)
+            convertView = LayoutInflater.from(parent?.context).inflate(R.layout.category_grid_view_item, null)
         }
         categoryName=convertView!!.findViewById(R.id.categoryName)
         categoryIcon= convertView.findViewById(R.id.categoryImage)
-        categoryName.text=categoryList.get(position).category_name
-        categoryIcon.setImageResource(R.drawable.bottom_sheet_settings_icon)
+        categoryName.text= categoryList[position].category_name
+        parent?.context?.resources?.getIdentifier(categoryList.get(position).category_icon_resource,"drawable",parent.context.packageName)
+            ?.let { categoryIcon.setImageResource(it) }
         return convertView
     }
-
+    fun setNewList(categorys:List<Category>){
+        categoryList=categorys
+        this.notifyDataSetChanged()
+    }
 }

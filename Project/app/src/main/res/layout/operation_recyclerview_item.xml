@@ -9,6 +9,7 @@
     android:layout_margin="3dp"
     android:layout_height="wrap_content">
     <LinearLayout
+        android:layout_gravity="center"
         android:layout_marginStart="10dp"
         android:gravity="center"
         android:orientation="horizontal"
@@ -16,21 +17,14 @@
         android:layout_height="wrap_content">
         <TextView
             style="@style/OperationRecycleViewItemTextViewStyle"
-            android:id="@+id/operationTypeRecyclerViewItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <View
-            style="@style/OperationRecycleViewItemViewStyle" />
-        <TextView
-            style="@style/OperationRecycleViewItemTextViewStyle"
-            android:id="@+id/operationValueRecyclerViewItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <View
-            style="@style/OperationRecycleViewItemViewStyle" />
-        <TextView
-            style="@style/OperationRecycleViewItemTextViewStyle"
             android:id="@+id/operationCategoryRecyclerViewItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <View
+            style="@style/OperationRecycleViewItemViewStyle" />
+        <TextView
+            style="@style/OperationRecycleViewItemTextViewStyle"
+            android:id="@+id/operationValueAndCurrencyRecyclerViewItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <View

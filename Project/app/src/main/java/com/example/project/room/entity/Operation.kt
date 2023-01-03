@@ -44,7 +44,7 @@ data class Operation (
     var operation_value:Double,
     var operation_currency_id:Int,
     var operation_category_id:Int,
-    var operation_datetime:String
+    var operation_datetime:Long
 ){
-    constructor() : this(0, 1, 0, 0.0,0,0,"0")
+    constructor() : this(0, 1, 0, 0.0,0,0,0)
 }

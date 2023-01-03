@@ -8,7 +8,7 @@ import com.example.project.room.dao.OperationsDao
 import com.example.project.room.entity.*;
 import java.io.File
 
-@Database(entities = [Category::class,Currency::class,Type::class,Operation::class,Bill::class], version = 1)
+@Database(entities = [Category::class,Currency::class,Type::class,Operation::class,Bill::class], version = 1, exportSchema = true)
 abstract class OperationsDatabase : RoomDatabase() {
     abstract fun OperationsDao():OperationsDao
     companion object{
